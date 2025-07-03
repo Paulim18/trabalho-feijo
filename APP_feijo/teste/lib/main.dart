@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
+import 'theme/app_theme.dart';
 
 void main() {
   runApp(const TodoApp());
@@ -40,9 +41,10 @@ class TodoApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: TodoHomePage(),
+    return MaterialApp(
+      title: 'Trabalho Feijo',
+      theme: AppTheme.lightTheme,
+      home: const TodoHomePage(),
     );
   }
 }
