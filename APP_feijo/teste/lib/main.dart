@@ -1,6 +1,7 @@
 // lib/main.dart
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:teste/login_page.dart';
 import 'dart:convert';
 import 'theme/app_theme.dart';
 
@@ -44,7 +45,7 @@ class TodoApp extends StatelessWidget {
     return MaterialApp(
       title: 'Trabalho Feijo',
       theme: AppTheme.lightTheme,
-      home: const TodoHomePage(),
+      home: const LoginPage(),
     );
   }
 }
@@ -166,37 +167,89 @@ class _TodoHomePageState extends State<TodoHomePage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Lista de Tarefas'),
-        actions: [
-          PopupMenuButton<String>(
-            onSelected: (value) {
-              setState(() {
-                filter = value;
-              });
-            },
-            itemBuilder: (context) => const [
-              PopupMenuItem(value: 'all', child: Text('Todas')),
-              PopupMenuItem(value: 'pending', child: Text('Pendentes')),
-              PopupMenuItem(value: 'completed', child: Text('Concluídas')),
-            ],
-          )
-        ],
       ),
-      body: ListView.builder(
-        itemCount: filteredTodos.length,
-        itemBuilder: (context, index) {
-          final todo = filteredTodos[index];
-          return ListTile(
-            title: Text(todo.title,
-                style: TextStyle(
-                    decoration: todo.completed ? TextDecoration.lineThrough : null)),
-            subtitle: Text('${todo.description}\n${todo.date.toLocal().toString().split(" ")[0]}'),
-            trailing: Checkbox(
-              value: todo.completed,
-              onChanged: (_) => toggleTodoStatus(todos.indexOf(todo)),
+
+      body: Column(
+        children: [
+          Expanded(
+            child: ListView.builder(
+              itemCount: filteredTodos.length,
+              itemBuilder: (context, index) {
+                final todo = filteredTodos[index];
+                return ListTile(
+                  title: Text(
+                    todo.title,
+                    style: TextStyle(
+                      decoration:
+                          todo.completed ? TextDecoration.lineThrough : null,
+                    ),
+                  ),
+                  subtitle: Text(
+                      '${todo.description}\n${todo.date.toLocal().toString().split(" ")[0]}'),
+                  trailing: Checkbox(
+                    value: todo.completed,
+                    onChanged: (_) => toggleTodoStatus(todos.indexOf(todo)),
             ),
           );
         },
       ),
+    ),
+
+    // Botão de filtro destacado
+    Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: ElevatedButton.icon(
+        onPressed: () {
+          showModalBottomSheet(
+            context: context,
+            builder: (_) {
+              return Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  ListTile(
+                    leading: const Icon(Icons.all_inbox),
+                    title: const Text('Todas'),
+                    onTap: () {
+                      setState(() => filter = 'all');
+                      Navigator.pop(context);
+                    },
+                  ),
+                  ListTile(
+                    leading: const Icon(Icons.schedule),
+                    title: const Text('Pendentes'),
+                    onTap: () {
+                      setState(() => filter = 'pending');
+                      Navigator.pop(context);
+                    },
+                  ),
+                  ListTile(
+                    leading: const Icon(Icons.check),
+                    title: const Text('Concluídas'),
+                    onTap: () {
+                      setState(() => filter = 'completed');
+                      Navigator.pop(context);
+                    },
+                  ),
+                ],
+              );
+            },
+          );
+        },
+        icon: const Icon(Icons.filter_list),
+        label: const Text('Filtrar Tarefas'),
+        style: ElevatedButton.styleFrom(
+          backgroundColor: Colors.indigo,
+          foregroundColor: Colors.white,
+          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+          ),
+        ),
+      ),
+    ),
+  ],
+),
+
       floatingActionButton: FloatingActionButton(
         onPressed: showAddTodoDialog,
         child: const Icon(Icons.add),

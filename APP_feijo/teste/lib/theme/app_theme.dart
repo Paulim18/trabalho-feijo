@@ -11,7 +11,7 @@ class AppTheme {
       ),
       appBarTheme: const AppBarTheme(
         backgroundColor: AppColors.primary,
-        foregroundColor: Colors.white,
+        foregroundColor: Color.fromARGB(255, 0, 0, 0),
       ),
     );
   }
