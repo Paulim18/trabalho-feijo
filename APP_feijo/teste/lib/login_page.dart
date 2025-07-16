@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'main.dart';
-import 'register_page.dart';
+import 'home_page.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -20,24 +19,20 @@ class _LoginPageState extends State<LoginPage> {
 
     if (_formKey.currentState!.validate()) {
       if (email == 'admin@email.com' && password == '123456') {
-        // Redireciona para a tela de tarefas
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (_) => const TodoHomePage()),
+          MaterialPageRoute(builder: (_) => const HomePage()),
         );
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text("Email ou senha inválidos")),
+          SnackBar(
+            content: const Text("Email ou senha inválidos"),
+            backgroundColor: const Color.fromARGB(255, 255, 46, 46),
+            behavior: SnackBarBehavior.floating,
+          ),
         );
       }
     }
-  }
-
-  void _goToRegister() {
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (_) => const RegisterPage()),
-    );
   }
 
   @override
@@ -70,11 +65,6 @@ class _LoginPageState extends State<LoginPage> {
               ElevatedButton(
                 onPressed: _login,
                 child: const Text("Entrar"),
-              ),
-              const SizedBox(height: 16),
-              TextButton(
-                onPressed: _goToRegister,
-                child: const Text("Criar nova conta"),
               ),
             ],
           ),
