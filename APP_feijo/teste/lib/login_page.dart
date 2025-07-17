@@ -13,32 +13,37 @@ class _LoginPageState extends State<LoginPage> {
   final passwordController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
 
+  String? loginError;
+
   void _login() {
     final email = emailController.text.trim();
     final password = passwordController.text;
 
     if (_formKey.currentState!.validate()) {
       if (email == 'admin@email.com' && password == '123456') {
+        setState(() {
+          loginError = null;
+        });
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(builder: (_) => const HomePage()),
         );
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: const Text("Email ou senha inválidos"),
-            backgroundColor: const Color.fromARGB(255, 255, 46, 46),
-            behavior: SnackBarBehavior.floating,
-          ),
-        );
+        setState(() {
+          loginError = "Email ou senha inválidos";
+        });
       }
+    } else {
+      setState(() {
+        loginError = null;
+      });
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("Login")),
+      appBar: AppBar(title: const Text("TaskList")),
       body: Padding(
         padding: const EdgeInsets.all(24.0),
         child: Form(
@@ -46,9 +51,28 @@ class _LoginPageState extends State<LoginPage> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
+              const Padding(
+                padding: EdgeInsets.only(bottom: 24),
+                child: Text(
+                  'Realize o login para acessar o TaskList',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white, // cor mais visível
+                  ),
+                ),
+              ),
+
               TextFormField(
                 controller: emailController,
-                decoration: const InputDecoration(labelText: "Email"),
+                decoration: const InputDecoration(
+                  labelText: "Email",
+                  errorStyle: TextStyle(
+                    color: Color(0xFFD32F2F), // vermelho vibrante
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
                 keyboardType: TextInputType.emailAddress,
                 validator: (value) =>
                     value!.isEmpty ? "Informe o email" : null,
@@ -56,12 +80,31 @@ class _LoginPageState extends State<LoginPage> {
               const SizedBox(height: 16),
               TextFormField(
                 controller: passwordController,
-                decoration: const InputDecoration(labelText: "Senha"),
+                decoration: const InputDecoration(
+                  labelText: "Senha",
+                  errorStyle: TextStyle(
+                    color: Color(0xFFD32F2F),
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
                 obscureText: true,
                 validator: (value) =>
                     value!.isEmpty ? "Informe a senha" : null,
               ),
-              const SizedBox(height: 32),
+              const SizedBox(height: 16),
+
+              if (loginError != null)
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 16),
+                  child: Text(
+                    loginError!,
+                    style: const TextStyle(
+                      color: Color(0xFFD32F2F),
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+
               ElevatedButton(
                 onPressed: _login,
                 child: const Text("Entrar"),
